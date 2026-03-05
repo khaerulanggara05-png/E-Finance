@@ -1,162 +1,1208 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MokaClone POS - Professional Interface</title>
-    <style>
-        /* CSS RESET & BASE */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f7f6; display: flex; height: 100vh; overflow: hidden; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Form Penggunaan Dana</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0A1628;
+    --navy-mid: #132040;
+    --blue: #1E3A5F;
+    --accent: #F5A623;
+    --accent-light: #FFC85A;
+    --success: #22C55E;
+    --danger: #EF4444;
+    --white: #FFFFFF;
+    --gray-100: #F8F9FC;
+    --gray-200: #EDF0F7;
+    --gray-300: #D1D9E6;
+    --gray-500: #8896A8;
+    --gray-700: #4A5568;
+    --text: #1A2332;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(10,22,40,0.10);
+    --shadow-lg: 0 8px 40px rgba(10,22,40,0.18);
+  }
 
-        /* SIDEBAR */
-        .sidebar { width: 80px; background-color: #ffffff; border-right: 1px solid #ddd; display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
-        .sidebar-icon { width: 45px; height: 45px; background: #eef2f1; border-radius: 12px; margin-bottom: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; color: #555; }
-        .sidebar-icon:hover, .sidebar-icon.active { background: #007bff; color: white; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* MAIN CONTENT */
-        .main-container { flex: 1; display: flex; flex-direction: column; }
-        .top-bar { height: 70px; background: white; border-bottom: 1px solid #ddd; display: flex; align-items: center; padding: 0 30px; justify-content: space-between; }
-        .search-input { width: 400px; padding: 10px 15px; border-radius: 8px; border: 1px solid #ddd; outline: none; background: #f9f9f9; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--gray-100);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
 
-        /* PRODUCT GRID */
-        .product-area { flex: 1; padding: 25px; overflow-y: auto; }
-        .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { padding: 8px 18px; background: white; border-radius: 20px; font-size: 14px; cursor: pointer; border: 1px solid #ddd; }
-        .tab.active { background: #007bff; color: white; border-color: #007bff; }
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    padding: 28px 20px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    background: rgba(245,166,35,0.12);
+    border-radius: 50%;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: -20px;
+    width: 100px; height: 100px;
+    background: rgba(245,166,35,0.07);
+    border-radius: 50%;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(245,166,35,0.18);
+    border: 1px solid rgba(245,166,35,0.35);
+    color: var(--accent-light);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .header p {
+    color: rgba(255,255,255,0.55);
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .header-logo {
+    position: absolute;
+    top: 20px; right: 20px;
+    width: 42px; height: 42px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .header-logo svg { width: 22px; height: 22px; fill: var(--accent-light); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; border: 1px solid transparent; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .card:hover { transform: translateY(-3px); border-color: #007bff; }
-        .card-img { height: 120px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 30px; }
-        .card-info { padding: 12px; }
-        .card-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-        .card-price { color: #007bff; font-weight: bold; font-size: 13px; }
+  /* PROGRESS */
+  .progress-wrap {
+    background: var(--white);
+    padding: 16px 20px;
+    box-shadow: 0 2px 8px rgba(10,22,40,0.06);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+  .progress-line {
+    position: absolute;
+    top: 14px; left: 14px; right: 14px;
+    height: 2px;
+    background: var(--gray-200);
+  }
+  .progress-line-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    transition: width 0.4s ease;
+    border-radius: 2px;
+  }
+  .step-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    border: 2px solid var(--gray-300);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    color: var(--gray-500);
+    position: relative; z-index: 1;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  .step-dot.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--navy);
+    box-shadow: 0 0 0 4px rgba(245,166,35,0.2);
+  }
+  .step-dot.done {
+    background: var(--success);
+    border-color: var(--success);
+    color: white;
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding: 0 2px;
+  }
+  .progress-labels span {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-align: center;
+    width: 28px;
+    letter-spacing: 0.3px;
+  }
+  .progress-labels span.active { color: var(--accent); }
+  .progress-labels span.done { color: var(--success); }
 
-        /* CART PANEL */
-        .cart-panel { width: 380px; background: white; border-left: 1px solid #ddd; display: flex; flex-direction: column; }
-        .cart-header { padding: 20px; border-bottom: 1px solid #eee; font-weight: bold; font-size: 18px; }
-        .cart-items { flex: 1; overflow-y: auto; padding: 20px; }
-        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; }
-        
-        .cart-footer { padding: 20px; background: #fafafa; border-top: 1px solid #eee; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; color: #666; }
-        .total-row { display: flex; justify-content: space-between; margin-top: 15px; font-weight: bold; font-size: 20px; color: #333; }
-        
-        .btn-pay { width: 100%; padding: 15px; background: #007bff; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        .btn-pay:hover { background: #0056b3; }
-    </style>
+  /* FORM CONTAINER */
+  .container { padding: 20px 16px 0; }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 14px;
+    border: 1px solid var(--gray-200);
+  }
+  .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .card-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .card-icon svg { width: 18px; height: 18px; stroke: var(--accent-light); fill: none; stroke-width: 2; }
+  .card-title h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .card-title p {
+    font-size: 11px;
+    color: var(--gray-500);
+    font-weight: 400;
+    margin-top: 1px;
+  }
+
+  /* FIELD */
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  label .req { color: var(--danger); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="number"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--gray-100);
+    transition: all 0.2s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.12);
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238896A8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 38px;
+  }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+
+  /* DIVISI GRID */
+  .divisi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .divisi-option {
+    position: relative;
+  }
+  .divisi-option input[type="radio"] {
+    position: absolute; opacity: 0; width: 0; height: 0;
+  }
+  .divisi-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 8px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: var(--gray-100);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-align: center;
+    margin: 0;
+  }
+  .divisi-option label .div-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+  .divisi-option input:checked + label {
+    border-color: var(--accent);
+    background: rgba(245,166,35,0.08);
+    color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(245,166,35,0.15);
+  }
+
+  /* UPLOAD */
+  .upload-area {
+    border: 2px dashed var(--gray-300);
+    border-radius: var(--radius-sm);
+    padding: 24px 16px;
+    text-align: center;
+    background: var(--gray-100);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .upload-area:hover, .upload-area.dragover {
+    border-color: var(--accent);
+    background: rgba(245,166,35,0.05);
+  }
+  .upload-area input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer;
+    width: 100%; height: 100%;
+    border: none; background: none; padding: 0;
+  }
+  .upload-icon {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .upload-icon svg { width: 22px; height: 22px; stroke: var(--accent-light); fill: none; stroke-width: 1.8; }
+  .upload-text { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 3px; }
+  .upload-sub { font-size: 11px; color: var(--gray-500); }
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .preview-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1.5px solid var(--gray-200);
+  }
+  .preview-item img { width: 100%; height: 100%; object-fit: cover; }
+  .preview-item .remove-btn {
+    position: absolute; top: 4px; right: 4px;
+    width: 20px; height: 20px;
+    background: rgba(239,68,68,0.9);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    border: none;
+  }
+  .preview-item .remove-btn svg { width: 10px; height: 10px; stroke: white; fill: none; stroke-width: 2.5; }
+
+  /* SIGNATURE */
+  .sig-wrap {
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius-sm);
+    background: var(--gray-100);
+    overflow: hidden;
+  }
+  .sig-label-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--gray-200);
+    border-bottom: 1px solid var(--gray-300);
+  }
+  .sig-label-bar span { font-size: 11px; font-weight: 600; color: var(--gray-700); }
+  .sig-clear {
+    font-size: 11px; font-weight: 600;
+    color: var(--danger);
+    background: none; border: none;
+    cursor: pointer; padding: 2px 6px;
+    border-radius: 4px;
+  }
+  canvas#sigCanvas {
+    display: block;
+    touch-action: none;
+    cursor: crosshair;
+    background: transparent;
+  }
+  .sig-empty-hint {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+  }
+  .sig-empty-hint p { font-size: 12px; color: var(--gray-500); }
+  .sig-container { position: relative; }
+
+  /* NOMINAL */
+  .nominal-wrap { position: relative; }
+  .nominal-prefix {
+    position: absolute;
+    left: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 13px; font-weight: 700; color: var(--gray-700);
+    font-family: 'DM Mono', monospace;
+    pointer-events: none;
+  }
+  .nominal-wrap input { padding-left: 40px; font-family: 'DM Mono', monospace; font-size: 14px; }
+  .nominal-display {
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(245,166,35,0.1);
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    display: none;
+  }
+
+  /* SECTION STEP */
+  .step-section { display: none; }
+  .step-section.active { display: block; }
+
+  /* BUTTONS */
+  .btn-row {
+    display: flex; gap: 10px;
+    margin-top: 20px;
+    padding: 0 16px;
+  }
+  .btn {
+    flex: 1;
+    padding: 15px;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    color: var(--navy);
+    box-shadow: 0 4px 14px rgba(245,166,35,0.4);
+  }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-secondary {
+    background: var(--gray-200);
+    color: var(--gray-700);
+  }
+  .btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+
+  /* SUCCESS */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .success-screen.show { display: block; }
+  .success-anim {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--success), #16A34A);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(34,197,94,0.4);
+    animation: pop 0.4s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .success-anim svg { width: 36px; height: 36px; stroke: white; fill: none; stroke-width: 3; }
+  .success-screen h2 { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 8px; }
+  .success-screen p { font-size: 14px; color: var(--gray-500); line-height: 1.6; }
+  .receipt-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin: 20px 0;
+    border: 1px solid var(--gray-200);
+    text-align: left;
+    box-shadow: var(--shadow);
+  }
+  .receipt-row {
+    display: flex; justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--gray-100);
+    font-size: 13px;
+  }
+  .receipt-row:last-child { border-bottom: none; }
+  .receipt-row .r-label { color: var(--gray-500); font-weight: 500; }
+  .receipt-row .r-val { font-weight: 700; color: var(--navy); text-align: right; max-width: 55%; }
+
+  /* SHEET CONFIG */
+  .config-banner {
+    background: linear-gradient(135deg, #FFF7E6, #FFF0CC);
+    border: 1.5px solid var(--accent);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    margin: 0 16px 16px;
+  }
+  .config-banner h3 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .config-banner p { font-size: 11px; color: var(--gray-700); line-height: 1.5; }
+  .config-input-wrap { margin-top: 10px; display: flex; gap: 8px; }
+  .config-input-wrap input {
+    flex: 1; font-size: 12px; padding: 9px 12px;
+    background: white;
+  }
+  .config-input-wrap button {
+    padding: 9px 14px;
+    background: var(--accent);
+    color: var(--navy);
+    font-size: 12px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--navy);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: 13px; font-weight: 600;
+    z-index: 999;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+    box-shadow: 0 8px 24px rgba(10,22,40,0.3);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .field-error {
+    font-size: 11px; color: var(--danger);
+    margin-top: 4px; font-weight: 500;
+    display: none;
+  }
+  .field-error.show { display: block; }
+  input.error, select.error, textarea.error {
+    border-color: var(--danger);
+    background: #FFF5F5;
+  }
+
+  .loading-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(10,22,40,0.7);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .loading-overlay.show { display: flex; }
+  .spinner {
+    width: 44px; height: 44px;
+    border: 4px solid rgba(255,255,255,0.2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay p { color: white; font-size: 14px; font-weight: 600; }
+</style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <div class="sidebar-icon active">🛒</div>
-        <div class="sidebar-icon">📊</div>
-        <div class="sidebar-icon">📦</div>
-        <div class="sidebar-icon">⚙️</div>
-    </aside>
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <p>Mengirim data...</p>
+</div>
 
-    <div class="main-container">
-        <header class="top-bar">
-            <input type="text" class="search-input" placeholder="Cari Menu atau Barcode...">
-            <div><strong>Kasir:</strong> Admin Ganteng</div>
-        </header>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-        <div class="product-area">
-            <div class="category-tabs">
-                <div class="tab active">Semua Menu</div>
-                <div class="tab">Kopi</div>
-                <div class="tab">Makanan</div>
-                <div class="tab">Minuman Non-Kopi</div>
-            </div>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+  </div>
+  <div class="header-badge">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Dokumen Resmi
+  </div>
+  <h1>Form Penggunaan<br>Dana Perusahaan</h1>
+  <p>Isi dengan lengkap & jujur sebagai pertanggungjawaban</p>
+</div>
 
-            <div class="grid" id="productGrid">
-                </div>
+<!-- GOOGLE SHEET CONFIG -->
+<div class="config-banner" id="configBanner">
+  <h3>⚙️ Hubungkan ke Google Sheets</h3>
+  <p>Masukkan URL Google Apps Script (Web App) untuk menyimpan data ke spreadsheet Anda. Data mulai dari kolom B.</p>
+  <div class="config-input-wrap">
+    <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/..." />
+    <button onclick="saveScriptUrl()">Simpan</button>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="progress-line">
+      <div class="progress-line-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="step-dot active" id="dot1">1</div>
+    <div class="step-dot" id="dot2">2</div>
+    <div class="step-dot" id="dot3">3</div>
+    <div class="step-dot" id="dot4">4</div>
+  </div>
+  <div class="progress-labels">
+    <span class="active" id="lbl1">Info</span>
+    <span id="lbl2">Dana</span>
+    <span id="lbl3">Bukti</span>
+    <span id="lbl4">TTD</span>
+  </div>
+</div>
+
+<!-- FORM WRAPPER -->
+<div id="formWrapper">
+
+<!-- STEP 1: INFO UMUM -->
+<div class="step-section active" id="step1">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
+        <div>
+          <h2>Identitas Pemohon</h2>
+          <p>Lengkapi data diri Anda</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Nama Lengkap <span class="req">*</span></label>
+        <input type="text" id="nama" placeholder="Masukkan nama lengkap" />
+        <div class="field-error" id="err-nama">Nama wajib diisi</div>
+      </div>
+
+      <div class="field">
+        <label>Tanggal Pengajuan <span class="req">*</span></label>
+        <input type="date" id="tanggal" />
+        <div class="field-error" id="err-tanggal">Tanggal wajib diisi</div>
+      </div>
+
+      <div class="field">
+        <label>No. HP / WhatsApp <span class="req">*</span></label>
+        <input type="text" id="noHP" placeholder="08xxxxxxxxxx" />
+        <div class="field-error" id="err-noHP">No. HP wajib diisi</div>
+      </div>
     </div>
 
-    <section class="cart-panel">
-        <div class="cart-header">Pesanan Saat Ini</div>
-        <div class="cart-items" id="cartItems">
-            <p style="text-align: center; color: #999; margin-top: 50px;">Belum ada pesanan</p>
+    <div class="card">
+      <div class="card-title">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
         </div>
-        
-        <div class="cart-footer">
-            <div class="summary-row"><span>Subtotal</span><span id="subtotal">Rp 0</span></div>
-            <div class="summary-row"><span>Pajak (10%)</span><span id="tax">Rp 0</span></div>
-            <div class="total-row"><span>Total</span><span id="total">Rp 0</span></div>
-            <button class="btn-pay" onclick="checkout()">BAYAR</button>
+        <div>
+          <h2>Pilih Divisi</h2>
+          <p>Pilih divisi tempat Anda bertugas</p>
         </div>
-    </section>
+      </div>
 
-    <script>
-        const products = [
-            { id: 1, name: "Espresso Single", price: 15000, icon: "☕" },
-            { id: 2, name: "Caramel Macchiato", price: 28000, icon: "🥤" },
-            { id: 3, name: "Beef Burger", price: 35000, icon: "🍔" },
-            { id: 4, name: "Chicken Wings", price: 25000, icon: "🍗" },
-            { id: 5, name: "Iced Tea", price: 10000, icon: "🍹" },
-            { id: 6, name: "Chocolate Cake", price: 22000, icon: "🍰" },
-        ];
+      <div class="divisi-grid" id="divisiGrid">
+        <div class="divisi-option">
+          <input type="radio" name="divisi" id="d-hrd" value="HRD">
+          <label for="d-hrd"><span class="div-icon">👥</span>HRD</label>
+        </div>
+        <div class="divisi-option">
+          <input type="radio" name="divisi" id="d-finance" value="Finance">
+          <label for="d-finance"><span class="div-icon">💰</span>Finance</label>
+        </div>
+        <div class="divisi-option">
+          <input type="radio" name="divisi" id="d-marketing" value="Marketing">
+          <label for="d-marketing"><span class="div-icon">📢</span>Marketing</label>
+        </div>
+        <div class="divisi-option">
+          <input type="radio" name="divisi" id="d-produksi" value="Produksi">
+          <label for="d-produksi"><span class="div-icon">🏭</span>Produksi</label>
+        </div>
+        <div class="divisi-option">
+          <input type="radio" name="divisi" id="d-admin" value="Admin">
+          <label for="d-admin"><span class="div-icon">🗂️</span>Admin</label>
+        </div>
+        <div class="divisi-option">
+          <input type="radio" name="divisi" id="d-warehouse" value="Warehouse">
+          <label for="d-warehouse"><span class="div-icon">📦</span>Warehouse</label>
+        </div>
+        <div class="divisi-option" style="grid-column: span 2;">
+          <input type="radio" name="divisi" id="d-store" value="Store">
+          <label for="d-store"><span class="div-icon">🏪</span>Store</label>
+        </div>
+      </div>
+      <div class="field-error" id="err-divisi" style="margin-top:8px">Pilih divisi terlebih dahulu</div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="goStep(2)">
+      Lanjut
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
 
-        let cart = [];
+<!-- STEP 2: DANA -->
+<div class="step-section" id="step2">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div>
+          <h2>Detail Penggunaan Dana</h2>
+          <p>Isi nominal dan tujuan penggunaan</p>
+        </div>
+      </div>
 
-        // Menampilkan Produk
-        const grid = document.getElementById('productGrid');
-        products.forEach(p => {
-            grid.innerHTML += `
-                <div class="card" onclick="addToCart(${p.id})">
-                    <div class="card-img">${p.icon}</div>
-                    <div class="card-info">
-                        <p class="card-name">${p.name}</p>
-                        <p class="card-price">Rp ${p.price.toLocaleString()}</p>
-                    </div>
-                </div>
-            `;
-        });
+      <div class="field">
+        <label>Jenis Pengeluaran <span class="req">*</span></label>
+        <select id="jenisKategori">
+          <option value="">-- Pilih Kategori --</option>
+          <option value="Operasional">Operasional Harian</option>
+          <option value="Pembelian Barang">Pembelian Barang</option>
+          <option value="Transportasi">Transportasi / Perjalanan Dinas</option>
+          <option value="Konsumsi">Konsumsi / Makan</option>
+          <option value="Peralatan">Peralatan / Perlengkapan</option>
+          <option value="Promosi">Promosi / Iklan</option>
+          <option value="Maintenance">Maintenance / Perbaikan</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+        <div class="field-error" id="err-jenis">Kategori wajib dipilih</div>
+      </div>
 
-        function addToCart(id) {
-            const product = products.find(p => p.id === id);
-            cart.push(product);
-            renderCart();
-        }
+      <div class="field">
+        <label>Nominal Dana (Rp) <span class="req">*</span></label>
+        <div class="nominal-wrap">
+          <span class="nominal-prefix">Rp</span>
+          <input type="number" id="nominal" placeholder="0" oninput="formatNominal()" min="0" />
+        </div>
+        <div class="nominal-display" id="nominalDisplay"></div>
+        <div class="field-error" id="err-nominal">Nominal wajib diisi</div>
+      </div>
 
-        function renderCart() {
-            const cartDiv = document.getElementById('cartItems');
-            const subtotalDiv = document.getElementById('subtotal');
-            const taxDiv = document.getElementById('tax');
-            const totalDiv = document.getElementById('total');
+      <div class="field">
+        <label>Tujuan Penggunaan Dana <span class="req">*</span></label>
+        <textarea id="tujuan" placeholder="Jelaskan secara rinci untuk apa dana ini digunakan, termasuk nama barang/jasa, jumlah, dan kebutuhan spesifik..."></textarea>
+        <div class="field-error" id="err-tujuan">Tujuan penggunaan wajib diisi</div>
+      </div>
 
-            if (cart.length === 0) {
-                cartDiv.innerHTML = `<p style="text-align: center; color: #999; margin-top: 50px;">Belum ada pesanan</p>`;
-                return;
-            }
+      <div class="field">
+        <label>Keterangan Tambahan</label>
+        <textarea id="keterangan" placeholder="Catatan tambahan jika diperlukan (opsional)..." style="min-height:60px"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goStep(1)">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Kembali
+    </button>
+    <button class="btn btn-primary" onclick="goStep(3)">
+      Lanjut
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
 
-            cartDiv.innerHTML = cart.map((item, index) => `
-                <div class="cart-item">
-                    <span>${item.name}</span>
-                    <strong>Rp ${item.price.toLocaleString()}</strong>
-                </div>
-            `).join('');
+<!-- STEP 3: BUKTI -->
+<div class="step-section" id="step3">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <div>
+          <h2>Upload Bukti Pembelian</h2>
+          <p>Foto struk, nota, atau kwitansi</p>
+        </div>
+      </div>
 
-            const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-            const tax = subtotal * 0.1;
-            const total = subtotal + tax;
+      <div class="upload-area" id="uploadArea">
+        <input type="file" id="fileInput" accept="image/*,application/pdf" multiple onchange="handleFiles(this.files)" />
+        <div class="upload-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <div class="upload-text">Ketuk untuk upload foto</div>
+        <div class="upload-sub">Struk / Nota / Kwitansi • JPG, PNG, PDF<br>Maks. 5 file • 5MB per file</div>
+      </div>
 
-            subtotalDiv.innerText = `Rp ${subtotal.toLocaleString()}`;
-            taxDiv.innerText = `Rp ${tax.toLocaleString()}`;
-            totalDiv.innerText = `Rp ${total.toLocaleString()}`;
-        }
+      <div class="preview-grid" id="previewGrid"></div>
+      <div class="field-error" id="err-file" style="margin-top:8px">Upload minimal 1 bukti pembelian</div>
+    </div>
 
-        function checkout() {
-            if (cart.length === 0) return alert("Keranjang masih kosong!");
-            alert("Transaksi Berhasil! Total: " + document.getElementById('total').innerText);
-            cart = [];
-            renderCart();
-            document.getElementById('subtotal').innerText = "Rp 0";
-            document.getElementById('tax').innerText = "Rp 0";
-            document.getElementById('total').innerText = "Rp 0";
-        }
-    </script>
+    <div class="card" style="background: linear-gradient(135deg,#FFF7E6,#FFF0CC); border-color: var(--accent);">
+      <div style="display:flex;gap:10px;align-items:flex-start;">
+        <span style="font-size:20px;flex-shrink:0;">⚠️</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">Penting!</div>
+          <div style="font-size:12px;color:var(--gray-700);line-height:1.6">
+            Bukti pembelian adalah syarat wajib untuk pertanggungjawaban dana. 
+            Tanpa bukti yang valid, pengajuan dapat <strong>ditolak atau diminta pengembalian dana</strong>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goStep(2)">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Kembali
+    </button>
+    <button class="btn btn-primary" onclick="goStep(4)">
+      Lanjut
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- STEP 4: TTD -->
+<div class="step-section" id="step4">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div>
+          <h2>Tanda Tangan Digital</h2>
+          <p>Tanda tangan sebagai pertanggungjawaban</p>
+        </div>
+      </div>
+
+      <div class="sig-wrap">
+        <div class="sig-label-bar">
+          <span>✍️ Tanda tangan di area bawah</span>
+          <button class="sig-clear" onclick="clearSig()">Hapus</button>
+        </div>
+        <div class="sig-container" id="sigContainer">
+          <canvas id="sigCanvas" width="340" height="160"></canvas>
+          <div class="sig-empty-hint" id="sigHint">
+            <p>Tanda tangan di sini</p>
+          </div>
+        </div>
+      </div>
+      <div class="field-error" id="err-sig" style="margin-top:8px">Tanda tangan wajib diisi</div>
+    </div>
+
+    <div class="card" style="border-left: 3px solid var(--navy);">
+      <div style="font-size:12px;color:var(--gray-700);line-height:1.7;font-weight:500">
+        Dengan menandatangani form ini, saya menyatakan bahwa:
+        <br>✅ Data yang saya isi adalah <strong>benar dan dapat dipertanggungjawabkan</strong>
+        <br>✅ Bukti yang dilampirkan adalah <strong>asli dan sah</strong>
+        <br>✅ Saya bersedia <strong>mengembalikan dana</strong> jika ditemukan ketidaksesuaian
+      </div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goStep(3)">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Kembali
+    </button>
+    <button class="btn btn-primary" onclick="submitForm()" style="background:linear-gradient(135deg,#0A1628,#1E3A5F);color:white;box-shadow:0 4px 14px rgba(10,22,40,0.4)">
+      <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+      Kirim Form
+    </button>
+  </div>
+</div>
+
+</div><!-- end formWrapper -->
+
+<!-- SUCCESS -->
+<div class="success-screen" id="successScreen">
+  <div class="container">
+    <div class="success-anim">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2>Form Terkirim!</h2>
+    <p>Data penggunaan dana Anda berhasil dikirim dan telah dicatat di sistem.</p>
+    <div class="receipt-card" id="receiptCard"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:4px" onclick="resetForm()">
+      Isi Form Baru
+    </button>
+  </div>
+</div>
+
+<script>
+// ============= CONFIG =============
+let SCRIPT_URL = localStorage.getItem('sheetScriptUrl') || '';
+const urlInput = document.getElementById('scriptUrl');
+if (SCRIPT_URL) {
+  urlInput.value = SCRIPT_URL;
+  document.getElementById('configBanner').style.background = 'linear-gradient(135deg,#F0FFF4,#DCFCE7)';
+  document.getElementById('configBanner').style.borderColor = '#22C55E';
+}
+
+function saveScriptUrl() {
+  const url = urlInput.value.trim();
+  if (!url.startsWith('https://script.google.com')) {
+    showToast('❌ URL tidak valid. Gunakan Google Apps Script URL'); return;
+  }
+  SCRIPT_URL = url;
+  localStorage.setItem('sheetScriptUrl', url);
+  document.getElementById('configBanner').style.background = 'linear-gradient(135deg,#F0FFF4,#DCFCE7)';
+  document.getElementById('configBanner').style.borderColor = '#22C55E';
+  showToast('✅ URL berhasil disimpan!');
+}
+
+// ============= STEP NAV =============
+let currentStep = 1;
+const totalSteps = 4;
+
+function goStep(n) {
+  if (n > currentStep && !validateStep(currentStep)) return;
+  document.getElementById('step' + currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step' + currentStep).classList.add('active');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const pct = ((currentStep - 1) / (totalSteps - 1)) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  for (let i = 1; i <= totalSteps; i++) {
+    const dot = document.getElementById('dot' + i);
+    const lbl = document.getElementById('lbl' + i);
+    dot.classList.remove('active', 'done');
+    lbl.classList.remove('active', 'done');
+    if (i < currentStep) { dot.classList.add('done'); dot.innerHTML = '✓'; lbl.classList.add('done'); }
+    else if (i === currentStep) { dot.classList.add('active'); dot.innerHTML = i; lbl.classList.add('active'); }
+    else { dot.innerHTML = i; }
+  }
+}
+
+// ============= VALIDATION =============
+function showErr(id, show) {
+  const el = document.getElementById('err-' + id);
+  if (el) { el.classList.toggle('show', show); }
+  const input = document.getElementById(id);
+  if (input) { input.classList.toggle('error', show); }
+}
+
+function validateStep(step) {
+  let valid = true;
+  if (step === 1) {
+    ['nama', 'tanggal', 'noHP'].forEach(f => {
+      const val = document.getElementById(f)?.value.trim();
+      if (!val) { showErr(f, true); valid = false; }
+      else showErr(f, false);
+    });
+    const divisi = document.querySelector('input[name="divisi"]:checked');
+    if (!divisi) { document.getElementById('err-divisi').classList.add('show'); valid = false; }
+    else document.getElementById('err-divisi').classList.remove('show');
+  }
+  if (step === 2) {
+    if (!document.getElementById('jenisKategori').value) { showErr('jenis', true); valid = false; }
+    else showErr('jenis', false);
+    const nom = document.getElementById('nominal').value;
+    if (!nom || parseFloat(nom) <= 0) { showErr('nominal', true); valid = false; }
+    else showErr('nominal', false);
+    if (!document.getElementById('tujuan').value.trim()) { showErr('tujuan', true); valid = false; }
+    else showErr('tujuan', false);
+  }
+  if (step === 3) {
+    if (uploadedFiles.length === 0) {
+      document.getElementById('err-file').classList.add('show'); valid = false;
+    } else document.getElementById('err-file').classList.remove('show');
+  }
+  if (step === 4) {
+    if (!sigHasContent()) {
+      document.getElementById('err-sig').classList.add('show'); valid = false;
+    } else document.getElementById('err-sig').classList.remove('show');
+  }
+  return valid;
+}
+
+// ============= NOMINAL FORMAT =============
+function formatNominal() {
+  const val = document.getElementById('nominal').value;
+  const display = document.getElementById('nominalDisplay');
+  if (val && parseFloat(val) > 0) {
+    display.style.display = 'block';
+    display.textContent = 'Rp ' + parseFloat(val).toLocaleString('id-ID', { minimumFractionDigits: 0 });
+  } else display.style.display = 'none';
+}
+
+// ============= FILE UPLOAD =============
+let uploadedFiles = [];
+const previewGrid = document.getElementById('previewGrid');
+
+function handleFiles(files) {
+  Array.from(files).forEach(file => {
+    if (uploadedFiles.length >= 5) { showToast('❌ Maks. 5 file'); return; }
+    if (file.size > 5 * 1024 * 1024) { showToast('❌ File ' + file.name + ' terlalu besar (maks 5MB)'); return; }
+    uploadedFiles.push(file);
+    const reader = new FileReader();
+    reader.onload = e => addPreview(e.target.result, uploadedFiles.length - 1);
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('err-file').classList.remove('show');
+}
+
+function addPreview(src, idx) {
+  const item = document.createElement('div');
+  item.className = 'preview-item'; item.id = 'prev-' + idx;
+  item.innerHTML = `<img src="${src}">
+    <button class="remove-btn" onclick="removeFile(${idx})">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+  previewGrid.appendChild(item);
+}
+
+function removeFile(idx) {
+  uploadedFiles.splice(idx, 1);
+  previewGrid.innerHTML = '';
+  uploadedFiles.forEach((f, i) => {
+    const reader = new FileReader();
+    reader.onload = e => addPreview(e.target.result, i);
+    reader.readAsDataURL(f);
+  });
+}
+
+// drag
+const uploadArea = document.getElementById('uploadArea');
+uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+uploadArea.addEventListener('drop', e => { e.preventDefault(); uploadArea.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
+
+// ============= SIGNATURE =============
+const canvas = document.getElementById('sigCanvas');
+const ctx = canvas.getContext('2d');
+let drawing = false, hasSig = false;
+
+function resizeCanvas() {
+  const w = canvas.parentElement.offsetWidth;
+  canvas.width = w;
+  canvas.height = 160;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function getPos(e) {
+  const r = canvas.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  return { x: src.clientX - r.left, y: src.clientY - r.top };
+}
+
+canvas.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+canvas.addEventListener('mousemove', e => { if (!drawing) return; const p = getPos(e); ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.strokeStyle = '#0A1628'; ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; document.getElementById('sigHint').style.display = 'none'; });
+canvas.addEventListener('mouseup', () => drawing = false);
+canvas.addEventListener('mouseleave', () => drawing = false);
+
+canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, { passive: false });
+canvas.addEventListener('touchmove', e => { e.preventDefault(); if (!drawing) return; const p = getPos(e); ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.strokeStyle = '#0A1628'; ctx.lineTo(p.x, p.y); ctx.stroke(); hasSig = true; document.getElementById('sigHint').style.display = 'none'; }, { passive: false });
+canvas.addEventListener('touchend', () => drawing = false);
+
+function clearSig() { ctx.clearRect(0, 0, canvas.width, canvas.height); hasSig = false; document.getElementById('sigHint').style.display = 'block'; }
+function sigHasContent() { return hasSig; }
+
+// ============= SUBMIT =============
+async function submitForm() {
+  if (!validateStep(4)) return;
+
+  const nomVal = parseFloat(document.getElementById('nominal').value);
+  const sigData = canvas.toDataURL('image/png');
+  const divisi = document.querySelector('input[name="divisi"]:checked').value;
+
+  // convert files to base64
+  const filesB64 = await Promise.all(uploadedFiles.map(f => new Promise(res => {
+    const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(f);
+  })));
+
+  const payload = {
+    timestamp: new Date().toLocaleString('id-ID'),
+    nama: document.getElementById('nama').value.trim(),
+    tanggal: document.getElementById('tanggal').value,
+    noHP: document.getElementById('noHP').value.trim(),
+    divisi,
+    jenisKategori: document.getElementById('jenisKategori').value,
+    nominal: nomVal,
+    nominalFormatted: 'Rp ' + nomVal.toLocaleString('id-ID'),
+    tujuan: document.getElementById('tujuan').value.trim(),
+    keterangan: document.getElementById('keterangan').value.trim(),
+    jumlahBukti: uploadedFiles.length,
+    ttd: sigData,
+    bukti: filesB64
+  };
+
+  if (!SCRIPT_URL) {
+    // demo mode
+    showSuccess(payload);
+    showToast('⚠️ URL Sheet belum diset. Data tampil demo.');
+    return;
+  }
+
+  document.getElementById('loadingOverlay').classList.add('show');
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    showSuccess(payload);
+    showToast('✅ Data berhasil dikirim ke Google Sheets!');
+  } catch (err) {
+    showToast('❌ Gagal mengirim. Cek koneksi internet.');
+  } finally {
+    document.getElementById('loadingOverlay').classList.remove('show');
+  }
+}
+
+function showSuccess(d) {
+  document.getElementById('formWrapper').style.display = 'none';
+  document.getElementById('configBanner').style.display = 'none';
+  const ss = document.getElementById('successScreen');
+  ss.classList.add('show');
+  document.getElementById('receiptCard').innerHTML = `
+    <div class="receipt-row"><span class="r-label">Nama</span><span class="r-val">${d.nama}</span></div>
+    <div class="receipt-row"><span class="r-label">Divisi</span><span class="r-val">${d.divisi}</span></div>
+    <div class="receipt-row"><span class="r-label">Kategori</span><span class="r-val">${d.jenisKategori}</span></div>
+    <div class="receipt-row"><span class="r-label">Nominal</span><span class="r-val" style="color:var(--accent);font-size:15px">${d.nominalFormatted}</span></div>
+    <div class="receipt-row"><span class="r-label">Bukti</span><span class="r-val">${d.jumlahBukti} file diunggah</span></div>
+    <div class="receipt-row"><span class="r-label">Waktu</span><span class="r-val">${d.timestamp}</span></div>
+  `;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetForm() {
+  document.getElementById('formWrapper').style.display = 'block';
+  document.getElementById('configBanner').style.display = 'block';
+  document.getElementById('successScreen').classList.remove('show');
+  document.getElementById('nama').value = '';
+  document.getElementById('tanggal').value = '';
+  document.getElementById('noHP').value = '';
+  document.querySelectorAll('input[name="divisi"]').forEach(r => r.checked = false);
+  document.getElementById('jenisKategori').value = '';
+  document.getElementById('nominal').value = '';
+  document.getElementById('nominalDisplay').style.display = 'none';
+  document.getElementById('tujuan').value = '';
+  document.getElementById('keterangan').value = '';
+  uploadedFiles = []; previewGrid.innerHTML = '';
+  clearSig();
+  goStep(1);
+  currentStep = 1;
+  updateProgress();
+}
+
+// set default date today
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('tanggal').value = today;
+
+// ============= TOAST =============
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+
+<!-- GOOGLE APPS SCRIPT SETUP GUIDE -->
+<!--
+=====================================================
+CARA MENGHUBUNGKAN KE GOOGLE SHEETS:
+=====================================================
+
+1. Buka Google Sheets baru
+2. Beri nama sheet sesuai kebutuhan (misal: "Data Dana")
+3. Di baris 1, buat header mulai dari kolom B:
+   B: Timestamp | C: Nama | D: Tanggal | E: No.HP | F: Divisi
+   G: Kategori | H: Nominal | I: Tujuan | J: Keterangan | K: Jumlah Bukti
+
+4. Buka menu Extensions > Apps Script
+5. Hapus kode yang ada, ganti dengan kode berikut:
+
+---
+function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const data = JSON.parse(e.postData.contents);
+
+  sheet.appendRow([
+    '',  // Kolom A kosong
+    data.timestamp,
+    data.nama,
+    data.tanggal,
+    data.noHP,
+    data.divisi,
+    data.jenisKategori,
+    data.nominalFormatted,
+    data.tujuan,
+    data.keterangan || '-',
+    data.jumlahBukti + ' file'
+  ]);
+
+  return ContentService
+    .createTextOutput(JSON.stringify({status: 'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+---
+
+6. Save > Deploy > New Deployment
+7. Type: Web App
+8. Execute as: Me
+9. Who has access: Anyone
+10. Deploy > Copy URL
+11. Paste URL ke form konfigurasi di bagian atas halaman
+
+=====================================================
+-->
 </body>
 </html>
